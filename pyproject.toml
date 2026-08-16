@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lame-project"
+version = "0.1.0"
+description = "Fetches stock data and visualizes moving-average crossover signals."
+requires-python = ">=3.11"
+dependencies = [
+    "yfinance",
+    "pandas",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+dev = ["ruff", "pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes (unused imports/vars, etc.)
+    "I",    # isort (import sorting)
+    "UP",   # pyupgrade
+    "DTZ",  # flake8-datetimez (naive datetime usage)
+]
