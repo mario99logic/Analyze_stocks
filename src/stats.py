@@ -3,16 +3,17 @@
 import pandas as pd
 
 
-def compute_stats(df: pd.DataFrame) -> dict:
+def compute_stats(symbol: str, df: pd.DataFrame) -> dict:
     """
     Compute basic return and volatility stats from stock price data.
 
     Args:
         df (pd.DataFrame): Daily OHLCV data, as returned by fetch_stock_data.
+        symbol (str): Stock ticker symbol, included in the returned dict.
 
     Returns:
-        dict: overall_return, volatility, best_day, worst_day (each a
-            (date, return) pair for best_day/worst_day).
+        dict: symbol, overall_return, volatility, best_day, worst_day (each of
+            best_day/worst_day is a {"date": str, "return": float} dict).
     """
     close = df["Close"]
 
@@ -26,31 +27,37 @@ def compute_stats(df: pd.DataFrame) -> dict:
     worst_day_date = daily_returns.idxmin()
 
     return {
-        "overall_return": overall_return,
-        "volatility": volatility,
-        "best_day": (best_day_date, daily_returns.loc[best_day_date]),  # (date, value in that date)
-        "worst_day": (worst_day_date, daily_returns.loc[worst_day_date]),
+        "symbol": symbol,
+        "overall_return": float(overall_return),
+        "volatility": float(volatility),
+        "best_day": {
+            "date": str(best_day_date.date()),
+            "return": float(daily_returns.loc[best_day_date]),
+        },
+        "worst_day": {
+            "date": str(worst_day_date.date()),
+            "return": float(daily_returns.loc[worst_day_date]),
+        },
     }
 
 
-def print_stats_summary(symbol: str, start_date: str, end_date: str, stats: dict) -> None:
+def print_stats_summary(start_date: str, end_date: str, stats: dict) -> None:
     """
     Print a short, readable summary of the computed stats.
 
     Args:
-        symbol (str): Stock ticker symbol.
         start_date (str): Start date in 'YYYY-MM-DD' format.
         end_date (str): End date in 'YYYY-MM-DD' format.
         stats (dict): Output of compute_stats.
     """
-    best_date, best_return = stats["best_day"]
-    worst_date, worst_return = stats["worst_day"]
+    best_day = stats["best_day"]
+    worst_day = stats["worst_day"]
 
-    print(f"{symbol} ({start_date} to {end_date})")
+    print(f"{stats['symbol']} ({start_date} to {end_date})")
     print(f"Overall return: {stats['overall_return']:+.1%}")
     print(f"Volatility (daily std dev): {stats['volatility']:.1%}")
-    print(f"Best day: {best_return:+.1%} on {best_date.date()}")
-    print(f"Worst day: {worst_return:+.1%} on {worst_date.date()}")
+    print(f"Best day: {best_day['return']:+.1%} on {best_day['date']}")
+    print(f"Worst day: {worst_day['return']:+.1%} on {worst_day['date']}")
 
 
 def add_moving_avgs(df: pd.DataFrame, period: int) -> pd.DataFrame:

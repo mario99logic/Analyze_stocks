@@ -14,13 +14,13 @@ def main():
     args = parser.parse_args()
 
     df = fetch_data.fetch_stock_data(args.stock, args.start_date, args.end_date)
-    stock_stats = stats.compute_stats(df)
+    stock_stats = stats.compute_stats(args.stock, df)
 
     df = stats.add_moving_avgs(df, 20)
     df = stats.add_moving_avgs(df, 50)
     mod_df = signals.detect_cross(df)
 
-    stats.print_stats_summary(args.stock, args.start_date, args.end_date, stock_stats)
+    stats.print_stats_summary(args.start_date, args.end_date, stock_stats)
     cross_graph.cross_graph(mod_df)
 
 
