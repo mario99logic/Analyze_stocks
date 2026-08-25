@@ -8,6 +8,8 @@ import pandas as pd
 import yfinance
 import yfinance.exceptions as yf_exceptions
 
+# TODO: add caching
+
 
 def validate_symbol(symbol: str) -> str:
     """
