@@ -30,8 +30,8 @@ def validate_date_format(date_str: str) -> date:
     """
     try:
         return date.fromisoformat(date_str)
-    except (ValueError, TypeError):
-        raise ValueError(f"Invalid date format: {date_str!r}. Expected 'YYYY-MM-DD'.")
+    except (ValueError, TypeError) as e:
+        raise ValueError(f"Invalid date format: {date_str!r}. Expected 'YYYY-MM-DD'.") from e
 
 
 def validate_date_range(start_date: str, end_date: str) -> tuple[date, date]:
